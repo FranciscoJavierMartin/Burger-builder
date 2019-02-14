@@ -1,18 +1,19 @@
 import React from 'react';
 import classes from './BurgerIngredient.module.css';
+import { BREAD_BOTTOM, BREAD_TOP, MEAT, CHEESE, SALAD, BACON } from '../../../constants/ingredients';
 
 interface IBurgerIngredientProps {
-    type: Ingredient;
+    type: string;
 }
 
 const burgerIngredient = (props: IBurgerIngredientProps) => {
     let ingredient = null;
 
     switch(props.type) {
-        case Ingredient.BreadBottom:
+        case BREAD_BOTTOM:
             ingredient = <div className={classes.BreadBottom}></div>;
             break;
-        case Ingredient.BreadTop:
+        case BREAD_TOP:
             ingredient = (
                 <div className={classes.BreadTop}>
                     <div className={classes.Seeds1}></div>
@@ -20,16 +21,16 @@ const burgerIngredient = (props: IBurgerIngredientProps) => {
                 </div>
             );
             break;
-        case Ingredient.Meat:
+        case MEAT:
             ingredient = <div className={classes.Meat}></div>;
             break;
-        case Ingredient.Cheese:
+        case CHEESE:
             ingredient = <div className={classes.Cheese}></div>;
             break;
-        case Ingredient.Salad:
+        case SALAD:
             ingredient = <div className={classes.Salad}></div>;
             break;
-        case Ingredient.Bacon:
+        case BACON:
             ingredient = <div className={classes.Bacon}></div>;
             break;
         default:

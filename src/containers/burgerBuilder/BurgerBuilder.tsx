@@ -1,19 +1,21 @@
 import React,{Component} from 'react';
 import Aux from '../../hoc/Aux';
 import Burger from '../../components/burger/Burger';
+import IHamburger from '../../interfaces/hamburger.interface';
+import BuildControls from '../../components/burger/buildControls/BuildControls';
 
 interface IBurgerBuilderState {
-    ingredients: {};
+    ingredients: IHamburger;
 }
 
 class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
 
     state = {
         ingredients: {
-            Salad: 1,
-            Bacon: 1,
-            Cheese: 2,
-            Meat: 2
+            Salad: 0,
+            Bacon: 0,
+            Cheese: 0,
+            Meat: 0
         }
     }
 
@@ -21,7 +23,7 @@ class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
         return (
             <Aux>
                 <Burger ingredients={this.state.ingredients}/>
-                <div>Build controls</div>
+                <BuildControls/>
             </Aux>
         )
     }

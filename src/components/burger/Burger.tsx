@@ -1,25 +1,27 @@
 import React from 'react';
 import classes from './Burger.module.css';
 import BurgerIngredient from './burgerIngredient/BugerIngredient';
-import Ingredient from '../../enums/ingredients.enum';
+import { BREAD_TOP, BREAD_BOTTOM } from '../../constants/ingredients';
+
 
 const burger = (props:any) => {
-    const transformedIngredient = Object.keys(props.ingredients)
-        .map(igKeyString => {
-            const igKey:Ingredient = Ingredient[igKeyString.toString()];
-            // const igKey:Ingredient = Ingredient.Meat;
-            const value = props.ingredients[igKey];
 
-            return [...Array(value)].map((_,i) => {
-                <BurgerIngredient key={igKeyString+i} type={igKey}/>
-            });
-        });
+    // Transform each ingredient into a component
+    let transformedIngredient: any = Object.keys(props.ingredients)
+        .flatMap(igKey =>
+            [...Array(props.ingredients[igKey])]
+                .map((_,i) => <BurgerIngredient key={igKey+i} type={igKey}/>)
+        );
+
+    if(transformedIngredient.length === 0) {
+        transformedIngredient = <p>Please start adding ingredients!</p>
+    }
 
     return (
         <div className={classes.Burger}>
-            <BurgerIngredient type={Ingredient.BreadTop}/>
+            <BurgerIngredient type={BREAD_TOP}/>
             {transformedIngredient}
-            <BurgerIngredient type={Ingredient.BreadBottom}/>
+            <BurgerIngredient type={BREAD_BOTTOM}/>
         </div>
     );
 };
