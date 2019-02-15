@@ -1,6 +1,6 @@
 export default interface IHamburger{
-        BreadTop? :number;
-        BreadBottom?: number;
+        // BreadTop? :number;
+        // BreadBottom?: number;
         Meat?: number;
         Salad?: number;
         Cheese?: number;
