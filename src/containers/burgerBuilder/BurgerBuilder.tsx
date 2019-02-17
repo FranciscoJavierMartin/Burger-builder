@@ -3,11 +3,17 @@ import Aux from "../../hoc/Aux";
 import Burger from "../../components/burger/Burger";
 import IHamburger from "../../interfaces/hamburger.interface";
 import BuildControls from "../../components/burger/buildControls/BuildControls";
-import { BACON, SALAD, MEAT, CHEESE } from '../../constants/ingredients';
+import Modal from "../../components/UI/modal/Modal";
+
+import { BACON, SALAD, MEAT, CHEESE } from "../../constants/ingredients";
+import OrderSummary from "../../components/burger/orderSummary/OrderSummary";
 
 interface IBurgerBuilderState {
-  ingredients: IHamburger;
+  // Replace any for the appropiate interface
+  ingredients: any;
   totalPrice: number;
+  purchaseable: boolean;
+  purchasing: boolean;
 }
 
 const INGREDIENT_PRICES = {
@@ -25,14 +31,24 @@ class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
       Cheese: 0,
       Meat: 0
     },
-    totalPrice: 4
+    totalPrice: 0,
+    purchaseable: false,
+    purchasing: false
   };
+
+  updatePurchaseState(ingredients: any) {
+    const sum = Object.keys(ingredients).reduce((sum, el) => {
+      return sum + ingredients[el];
+    }, 0);
+
+    this.setState({ purchaseable: sum > 0 });
+  }
 
   // TODO: Refactor for a better approach
-  addIngredientHandler = (type: string):void => {
-    let oldCount:number;
+  addIngredientHandler = (type: string): void => {
+    let oldCount: number;
     let updatedCount: number;
-    let updatedIngredients: IHamburger;
+    let updatedIngredients: IHamburger = {};
     let priceAddition: number;
     let oldPrice: number;
     let newPrice: number;
@@ -99,13 +115,16 @@ class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
         });
         break;
       default:
+      //TODO: Throw an exception
     }
+
+    this.updatePurchaseState(updatedIngredients);
   };
 
-  removeIngredientHandler = (type: string):void => {
-    let oldCount:number;
+  removeIngredientHandler = (type: string): void => {
+    let oldCount: number;
     let updatedCount: number;
-    let updatedIngredients: IHamburger;
+    let updatedIngredients: IHamburger = {};
     let priceAddition: number;
     let oldPrice: number;
     let newPrice: number;
@@ -113,90 +132,119 @@ class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
     switch (type) {
       case BACON:
         oldCount = this.state.ingredients[BACON];
-        if(oldCount > 0){
-        updatedCount = oldCount - 1;
-        updatedIngredients = {
-          ...this.state.ingredients
-        };
-        updatedIngredients[BACON] = updatedCount;
-        priceAddition = INGREDIENT_PRICES[BACON];
-        oldPrice = this.state.totalPrice;
-        newPrice = oldPrice - priceAddition;
-        this.setState({
-          totalPrice: newPrice,
-          ingredients: updatedIngredients
-        });
+        if (oldCount > 0) {
+          updatedCount = oldCount - 1;
+          updatedIngredients = {
+            ...this.state.ingredients
+          };
+          updatedIngredients[BACON] = updatedCount;
+          priceAddition = INGREDIENT_PRICES[BACON];
+          oldPrice = this.state.totalPrice;
+          newPrice = oldPrice - priceAddition;
+          this.setState({
+            totalPrice: newPrice,
+            ingredients: updatedIngredients
+          });
         }
-        
+
         break;
       case SALAD:
         oldCount = this.state.ingredients[SALAD];
-        if(oldCount > 0){
-        updatedCount = oldCount - 1;
-        updatedIngredients = {
-          ...this.state.ingredients
-        };
-        updatedIngredients[SALAD] = updatedCount;
-        priceAddition = INGREDIENT_PRICES[SALAD];
-        oldPrice = this.state.totalPrice;
-        newPrice = oldPrice - priceAddition;
-        this.setState({
-          totalPrice: newPrice,
-          ingredients: updatedIngredients
-        });}
+        if (oldCount > 0) {
+          updatedCount = oldCount - 1;
+          updatedIngredients = {
+            ...this.state.ingredients
+          };
+          updatedIngredients[SALAD] = updatedCount;
+          priceAddition = INGREDIENT_PRICES[SALAD];
+          oldPrice = this.state.totalPrice;
+          newPrice = oldPrice - priceAddition;
+          this.setState({
+            totalPrice: newPrice,
+            ingredients: updatedIngredients
+          });
+        }
         break;
       case MEAT:
         oldCount = this.state.ingredients[MEAT];
-        if(oldCount > 0){
-        updatedCount = oldCount - 1;
-        updatedIngredients = {
-          ...this.state.ingredients
-        };
-        updatedIngredients[MEAT] = updatedCount;
-        priceAddition = INGREDIENT_PRICES[MEAT];
-        oldPrice = this.state.totalPrice;
-        newPrice = oldPrice - priceAddition;
-        this.setState({
-          totalPrice: newPrice,
-          ingredients: updatedIngredients
-        });}
+        if (oldCount > 0) {
+          updatedCount = oldCount - 1;
+          updatedIngredients = {
+            ...this.state.ingredients
+          };
+          updatedIngredients[MEAT] = updatedCount;
+          priceAddition = INGREDIENT_PRICES[MEAT];
+          oldPrice = this.state.totalPrice;
+          newPrice = oldPrice - priceAddition;
+          this.setState({
+            totalPrice: newPrice,
+            ingredients: updatedIngredients
+          });
+        }
         break;
       case CHEESE:
         oldCount = this.state.ingredients[CHEESE];
-        if(oldCount > 0){
-        updatedCount = oldCount - 1;
-        updatedIngredients = {
-          ...this.state.ingredients
-        };
-        updatedIngredients[CHEESE] = updatedCount;
-        priceAddition = INGREDIENT_PRICES[CHEESE];
-        oldPrice = this.state.totalPrice;
-        newPrice = oldPrice - priceAddition;
-        this.setState({
-          totalPrice: newPrice,
-          ingredients: updatedIngredients
-        });}
+        if (oldCount > 0) {
+          updatedCount = oldCount - 1;
+          updatedIngredients = {
+            ...this.state.ingredients
+          };
+          updatedIngredients[CHEESE] = updatedCount;
+          priceAddition = INGREDIENT_PRICES[CHEESE];
+          oldPrice = this.state.totalPrice;
+          newPrice = oldPrice - priceAddition;
+          this.setState({
+            totalPrice: newPrice,
+            ingredients: updatedIngredients
+          });
+        }
         break;
       default:
     }
+
+    this.updatePurchaseState(updatedIngredients);
   };
+
+  purchaseHandler = (): void => {
+    this.setState({ purchasing: true });
+  };
+
+  purchaceCancelHandler = (): void => {
+    this.setState({purchasing: false});
+  }
+
+  pruchaseContinueHandler = (): void => {
+    alert('You continue');
+  }
 
   render() {
-    const disabledInfo:any = {
+    const disabledInfo: any = {
       ...this.state.ingredients
     };
 
-    for(let key in disabledInfo) {
-      disabledInfo[key] = disabledInfo[key] <= 0
+    for (let key in disabledInfo) {
+      disabledInfo[key] = disabledInfo[key] <= 0;
     }
     return (
       <Aux>
+        <Modal 
+          show={this.state.purchasing}
+          modalClose={this.purchaceCancelHandler}>
+          <OrderSummary 
+            ingredients={this.state.ingredients}
+            price={this.state.totalPrice}
+            purchaseCancelled={this.purchaceCancelHandler}
+            purchaseContinued={this.pruchaseContinueHandler}/>
+        </Modal>
         <Burger ingredients={this.state.ingredients} />
-        <BuildControls 
+        <BuildControls
           ingredientAdded={this.addIngredientHandler}
           ingredientRemoved={this.removeIngredientHandler}
           disabled={disabledInfo}
-          price={this.state.totalPrice}/>
+          purchasable={this.state.purchaseable}
+          ordered={this.purchaseHandler}
+          price={this.state.totalPrice}
+        />
       </Aux>
     );
   }

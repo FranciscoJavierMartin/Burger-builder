@@ -3,13 +3,6 @@ import classes from './BuildControls.module.css';
 import BuildControl from './buildControl/BuildControl';
 import { SALAD, BACON, CHEESE, MEAT } from '../../../constants/ingredients';
 
-// const controls = [
-//     { label: 'Salad', type: 'salad' },
-//     { label: 'Bacon', type: 'bacon' },
-//     { label: 'Cheese', type: 'cheese' },
-//     { label: 'Meat', type: 'meat' }
-// ];
-
 const controls = [
          { label: 'Salad', type: SALAD },
          { label: 'Bacon', type: BACON },
@@ -23,6 +16,8 @@ interface IBuildControlsProps {
     ingredientRemoved: (type:string)=>void;
     disabled: any;
     price: number;
+    purchasable: boolean;
+    ordered: () => void;
 };
 
 const buildControls = (props:IBuildControlsProps) => (
@@ -37,6 +32,12 @@ const buildControls = (props:IBuildControlsProps) => (
                 removed={() => props.ingredientRemoved(ctrl.type)}
                 disabled={props.disabled[ctrl.type]}/>
         ))}
+        <button 
+            className={classes.OrderButton}
+            disabled={!props.purchasable}
+            onClick={props.ordered}>
+            Order now!
+        </button>
     </div>
 );
 

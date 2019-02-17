@@ -3,8 +3,11 @@ import classes from './Burger.module.css';
 import BurgerIngredient from './burgerIngredient/BugerIngredient';
 import { BREAD_TOP, BREAD_BOTTOM } from '../../constants/ingredients';
 
+interface IBurgerProps {
+    ingredients: any;
+}
 
-const burger = (props:any) => {
+const burger = (props:IBurgerProps) => {
 
     // Transform each ingredient into a component
     let transformedIngredient: any = Object.keys(props.ingredients)
