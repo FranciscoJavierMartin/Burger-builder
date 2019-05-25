@@ -7,7 +7,7 @@ interface IButtonProps {
     btnType: string;
 };
 
-const button = (props: IButtonProps) => (
+const Button = (props: IButtonProps) => (
     <button
         className={[classes.Button, classes[props.btnType]].join(' ')}
         onClick={props.clicked}>
@@ -15,4 +15,4 @@ const button = (props: IButtonProps) => (
     </button>
 );
 
-export default button;
+export default Button;

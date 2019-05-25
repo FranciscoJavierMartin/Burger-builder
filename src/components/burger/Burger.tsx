@@ -3,7 +3,7 @@ import classes from './Burger.module.css';
 import BurgerIngredient from './burgerIngredient/BugerIngredient';
 import { BREAD_TOP, BREAD_BOTTOM } from '../../constants/ingredients';
 
-interface IBurgerProps {
+export interface IBurgerProps {
     ingredients: any;
 }
 

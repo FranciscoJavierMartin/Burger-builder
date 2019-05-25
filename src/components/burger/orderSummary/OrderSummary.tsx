@@ -32,7 +32,7 @@ const orderSummary = (props: IOrderSummaryProps) => {
             <Button btnType="Danger" clicked={props.purchaseCancelled}>Cancel</Button>
             <Button btnType="Success" clicked={props.purchaseContinued}>Continue!</Button>
         </Aux>
-    )
+    );
 };
 
 export default orderSummary;
