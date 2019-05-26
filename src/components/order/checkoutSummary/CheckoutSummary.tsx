@@ -6,6 +6,8 @@ import IHamburger from '../../../../interfaces/hamburger.interface';
 
 interface ICheckoutSummaryProps{
     ingredients: IHamburger;
+    checkoutCancelled: () => void;
+    checkoutContinued: () => void;
 }
 
 const checkoutSummary = (props: ICheckoutSummaryProps) => (
@@ -16,10 +18,10 @@ const checkoutSummary = (props: ICheckoutSummaryProps) => (
         </div>
         <Button 
             btnType="Danger"
-            clicked >Cancel</Button>
+            clicked={props.checkoutCancelled} >Cancel</Button>
         <Button 
             btnType="Success" 
-            clicked>Continue</Button>
+            clicked={props.checkoutContinued}>Continue</Button>
     </div>
 );
 

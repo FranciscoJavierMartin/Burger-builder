@@ -6,7 +6,7 @@ import SideDrawer from '../../components/navigation/sideDrawer/SideDrawer';
 import classes from './Layout.module.css';
 
 interface ILayoutProps {
-    children: JSX.Element[];
+    children: JSX.Element | JSX.Element[];
 }
 
 interface ILayoutState {
