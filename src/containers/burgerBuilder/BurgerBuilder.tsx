@@ -10,6 +10,7 @@ import withErrorHandler from '../../hoc/withErrorHandler';
 import { BACON, SALAD, MEAT, CHEESE } from "../../constants/ingredients";
 import OrderSummary from "../../components/burger/orderSummary/OrderSummary";
 import axios from '../../axios-orders';
+import { IRouterProps } from "../../interfaces/routerProps.interface";
 
 interface IBurgerBuilderState {
   // Replace any for the appropiate interface
@@ -28,7 +29,7 @@ const INGREDIENT_PRICES = {
   Bacon: 0.7
 };
 
-class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
+class BurgerBuilder extends Component<IRouterProps, IBurgerBuilderState> {
   state = {
     ingredients: {
       Salad: 0,
@@ -231,28 +232,20 @@ class BurgerBuilder extends Component<{}, IBurgerBuilderState> {
   }
 
   pruchaseContinueHandler = (): void => {
-    this.setState({loading: true});
-    const order = {
-      ingredient: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'John Doe',
-        address: {
-          street: 'Fake street 1',
-          zipCode: '12345',
-          country: 'USA'
-        },
-        email: 'test@test.com'
-      },
-      deliveryMethod: 'fastest'
-    }
 
-    axios.post('/orders.json', order)
-      .then(response => {
-        this.setState({loading: false, purchasing: false});
-      }).catch(error => {
-        this.setState({loading: false, purchasing: false});
-      })
+      const queryParams = [];
+
+      for(let i in this.state.ingredients){
+        queryParams.push(encodeURIComponent(i)+'='+encodeURIComponent((this.state.ingredients as any)[i]));
+      }
+
+      queryParams.push('price='+this.state.totalPrice);
+      const queryString= queryParams.join('&');
+
+      this.props.history.push({
+        pathname: '/checkout',
+        search: '?'+queryString
+      });
   }
 
   render() {

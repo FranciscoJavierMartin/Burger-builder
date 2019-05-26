@@ -7,7 +7,8 @@ export interface IBurgerProps {
     ingredients: any;
 }
 
-const burger = (props:IBurgerProps) => {
+// TODO: Reassing the correct props type
+const burger = (props:any) => {
 
     // Transform each ingredient into a component
     let transformedIngredient: any = Object.keys(props.ingredients)

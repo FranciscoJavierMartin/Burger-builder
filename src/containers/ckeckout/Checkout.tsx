@@ -1,26 +1,55 @@
 import React, {Component} from 'react';
+import {Route} from 'react-router-dom';
 import CheckoutSummary from '../../components/UI/order/checkoutSummary/CheckoutSummary';
+import ContactData from './contactData/ContactData';
 import IHamburger from '../../interfaces/hamburger.interface';
+import { IRouterProps } from '../../interfaces/routerProps.interface';
+import { URLSearchParams } from 'url';
 
 interface ICheckoutState {
     ingredients: IHamburger;
+    totalPrice: number;
 }
 
-class Checkout extends Component<{},ICheckoutState>{
+class Checkout extends Component<IRouterProps,ICheckoutState>{
 
     state: ICheckoutState = {
-        ingredients: {
-            Salad: 1,
-            Meat: 1,
-            Cheese: 1,
-            Bacon: 1
+        ingredients: null,
+        totalPrice: 0,
+    }
+
+    componentWillMount(){
+        const query = new URLSearchParams(this.props.location.search);
+        const ingredients:any = {};
+        let price = 0;
+        for(let param of query.entries() as any){
+            if(param[0] === 'price'){
+                price = param[1];
+            } else {
+                ingredients[param[0]] = +param[1];
+            }
+            
         }
+        this.setState({ingredients, totalPrice: price});
+    }
+
+    checkoutCancelledHandler = () => {
+        this.props.history.goBack();
+    }
+
+    checkoutContinuedHandler = () => {
+        this.props.history.replace('/checkout/contact-data');
     }
 
     render(){
         return(
             <div>
-                <CheckoutSummary ingredients={this.state.ingredients}/>
+                <CheckoutSummary 
+                    ingredients={this.state.ingredients}
+                    checkoutCancelled={this.checkoutCancelledHandler}
+                    checkoutContinued={this.checkoutContinuedHandler}/>
+                    <Route path={this.props.match.path + '/contact-data'} 
+                        render={(props) => (<ContactData ingredients={this.state.ingredients} price={this.state.totalPrice} {...props}/>)}/>
             </div>
         )
     }
