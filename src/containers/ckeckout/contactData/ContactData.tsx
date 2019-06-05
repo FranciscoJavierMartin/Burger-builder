@@ -1,31 +1,86 @@
 import React, { Component } from "react";
-import { IAddress } from "../../../interfaces/address.interface";
 import Button from "../../../components/UI/button/Button";
 import Spinner from "../../../components/UI/spinner/Spinner";
 import classes from "./ContactData.module.css";
 import IHamburger from "../../../interfaces/hamburger.interface";
 import axios from "../../../axios-orders";
 import { IRouterProps } from "../../../interfaces/routerProps.interface";
+import Input from "../../../components/UI/input/Input";
+import { InputElement } from "../../../interfaces/inputs.interface";
 
-interface IContactDataProps extends IRouterProps{
+interface IContactDataProps extends IRouterProps {
   ingredients: IHamburger;
   price: number;
 }
 
+interface IOrderForm {
+  name: InputElement;
+  street: InputElement;
+  zipCode: InputElement;
+  country: InputElement;
+  email: InputElement;
+  deliveryMethod: InputElement;
+}
+
 interface IContactDataState {
-  name: string;
-  email: string;
-  address: IAddress;
+  orderForm: IOrderForm;
   loading: boolean;
 }
 
 class ContactData extends Component<IContactDataProps, IContactDataState> {
+
   state: IContactDataState = {
-    name: "",
-    email: "",
-    address: {
-      street: "",
-      postalCode: ""
+    orderForm: {
+      name: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Your name"
+        },
+        value: ""
+      },
+      street: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Street"
+        },
+        value: ""
+      },
+      zipCode: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "ZIP Code"
+        },
+        value: ""
+      },
+      country: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Country"
+        },
+        value: ""
+      },
+      email: {
+        elementType: "input",
+        elementConfig: {
+          type: "email",
+          placeholder: "Your email"
+        },
+        value: ""
+      },
+      deliveryMethod: {
+        elementType: "select",
+        elementConfig: {
+          options: [
+            { value: "fastest", displayValue: "Fastest" },
+            { value: "cheapest", displayValue: "Cheapest" }
+          ]
+        },
+        value: ""
+      }
     },
     loading: false
   };
@@ -36,24 +91,14 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
     this.setState({ loading: true });
     const order = {
       ingredient: this.props.ingredients,
-      price: this.props.price,
-      customer: {
-        name: "John Doe",
-        address: {
-          street: "Fake street 1",
-          zipCode: "12345",
-          country: "USA"
-        },
-        email: "test@test.com"
-      },
-      deliveryMethod: "fastest"
+      price: this.props.price
     };
 
     axios
       .post("/orders.json", order)
       .then(response => {
         this.setState({ loading: false });
-        this.props.history.push('/');
+        this.props.history.push("/");
       })
       .catch(error => {
         this.setState({ loading: false });
@@ -62,36 +107,28 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
 
   render() {
     let form: JSX.Element;
+    const formElementsArray = [];
+
+    for(let key in this.state.orderForm){
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key],
+      })
+    }
 
     if (this.state.loading) {
       form = <Spinner />;
     } else {
       form = (
         <form>
-          <input
-            className={classes.Input}
-            type="text"
-            name="name"
-            placeholder="Your name"
-          />
-          <input
-            className={classes.Input}
-            type="email"
-            name="email"
-            placeholder="Your email"
-          />
-          <input
-            className={classes.Input}
-            type="text"
-            name="street"
-            placeholder="Street"
-          />
-          <input
-            className={classes.Input}
-            type="text"
-            name="postal"
-            placeholder="Postal code"
-          />
+          <Input elementType="..." elementConfig="..." value="..."/>
+          {formElementsArray.map(formElement => (
+            <Input 
+              key={formElement.id}
+              elementType={formElement.config.elementType}
+              elementConfig={formElement.config.elementConfig}
+              value={formElement.config.elementConfig}/>
+          ))}
           <Button btnType="Success" clicked={this.orderHandler}>
             Order
           </Button>
