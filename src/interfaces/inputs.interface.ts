@@ -16,6 +16,12 @@ export interface IOptionSelect{
     elementType: string;
     elementConfig: IElementConfigInput | IElementConfigSelect;
     value: string;
+    validation: {
+      required: boolean;
+      minLength?: number;
+      maxLength?: number;
+    },
+    valid: boolean;
   }
   
   /*export interface SelectElement {

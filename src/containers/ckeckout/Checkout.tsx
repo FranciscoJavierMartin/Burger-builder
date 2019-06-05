@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
-import CheckoutSummary from '../../components/UI/order/checkoutSummary/CheckoutSummary';
+// import CheckoutSummary from '../../components/UI/order/checkoutSummary/CheckoutSummary';
+import CheckoutSummary from '../../components/order/checkoutSummary/CheckoutSummary';
 import ContactData from './contactData/ContactData';
 import IHamburger from '../../interfaces/hamburger.interface';
 import { IRouterProps } from '../../interfaces/routerProps.interface';

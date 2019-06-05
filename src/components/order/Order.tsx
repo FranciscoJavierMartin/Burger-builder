@@ -10,10 +10,11 @@ interface IOrderProps{
 const order = (props: IOrderProps) => {
     const ingredients = [];
 
-    for(let ingredientName in props.ingredients){
+    for(let ingredientName in (props.ingredients as any)){
         ingredients.push({
             name: ingredientName,
-            amount: props.ingredients[ingredientName]
+            // TODO: Add index signature
+            amount: (props.ingredients as any)[ingredientName.toString()]
         });
     }
 

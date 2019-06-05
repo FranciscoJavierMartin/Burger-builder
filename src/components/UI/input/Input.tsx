@@ -1,4 +1,4 @@
-import React from 'react';
+onChange={props.changed} import React from 'react';
 import classes from './Input.module.css';
 import { IElementConfigSelect, IElementConfigInput, IOptionSelect } from '../../../interfaces/inputs.interface';
 
@@ -7,6 +7,7 @@ interface IInputProps {
     inputtype?: string;
     elementConfig:  IElementConfigInput | IElementConfigSelect;
     value: string;
+    changed: (event: any) => void;
 }
 
 const input = (props: IInputProps) => {
@@ -14,15 +15,15 @@ const input = (props: IInputProps) => {
 
     switch(props.inputtype){
         case ('input'):
-            inputElement = <input className={classes.InputElement} 
+            inputElement = <input onChange={props.changed} className={classes.InputElement} 
             {...props.elementConfig} value={props.value}/>;
             break;
         case ('textarea'):
-            inputElement = <textarea className={classes.InputElement} 
+            inputElement = <textarea onChange={props.changed} className={classes.InputElement} 
             {...props.elementConfig} value={props.value}/>;
             break;
         case ('select'):
-            inputElement = (<select className={classes.InputElement} 
+            inputElement = (<select onChange={props.changed} className={classes.InputElement} 
             {...props.elementConfig} value={props.value}>
                 {(props.elementConfig as IElementConfigSelect).options.map(
                     (optionFromSelect: IOptionSelect) => (

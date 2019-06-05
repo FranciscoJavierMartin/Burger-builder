@@ -1,8 +1,11 @@
 import React from 'react';
-import Burger from '../../../burger/Burger';
-import Button from '../../button/Button';
+// import Burger from '../../../burger/Burger';
+import Burger from '../../burger/Burger';
+// import Button from '../../button/Button';
+import Button from '../../UI/button/Button';
 import classes from './CheckoutSummary.module.css';
-import IHamburger from '../../../../interfaces/hamburger.interface';
+// import IHamburger from '../../../../interfaces/hamburger.interface';
+import IHamburger from '../../../interfaces/hamburger.interface';
 
 interface ICheckoutSummaryProps{
     ingredients: IHamburger;

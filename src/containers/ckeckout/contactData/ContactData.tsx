@@ -37,7 +37,13 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           type: "text",
           placeholder: "Your name"
         },
-        value: ""
+        value: "",
+        validation: {
+          required: true,
+          minLength: 5,
+          maxLength: 6
+        },
+        valid: false,
       },
       street: {
         elementType: "input",
@@ -45,7 +51,11 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           type: "text",
           placeholder: "Street"
         },
-        value: ""
+        value: "",
+        validation: {
+          required: true
+        },
+        valid: false,
       },
       zipCode: {
         elementType: "input",
@@ -53,7 +63,11 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           type: "text",
           placeholder: "ZIP Code"
         },
-        value: ""
+        value: "",
+        validation: {
+          required: true
+        },
+        valid: false,
       },
       country: {
         elementType: "input",
@@ -61,7 +75,11 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           type: "text",
           placeholder: "Country"
         },
-        value: ""
+        value: "",
+        validation: {
+          required: true
+        },
+        valid: false,
       },
       email: {
         elementType: "input",
@@ -69,7 +87,11 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           type: "email",
           placeholder: "Your email"
         },
-        value: ""
+        value: "",
+        validation: {
+          required: true
+        },
+        valid: false,
       },
       deliveryMethod: {
         elementType: "select",
@@ -79,7 +101,11 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
             { value: "cheapest", displayValue: "Cheapest" }
           ]
         },
-        value: ""
+        value: "",
+        validation: {
+          required: true
+        },
+        valid: false,
       }
     },
     loading: false
@@ -89,6 +115,10 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
     event.preventDefault();
 
     this.setState({ loading: true });
+    const formData: any = {};
+    for(let formElementIdentifier in this.state.orderForm){
+      formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+    }
     const order = {
       ingredient: this.props.ingredients,
       price: this.props.price
@@ -105,6 +135,37 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
       });
   };
 
+  checkValidity(value: string, rules: any) {
+    let isValid = false;
+
+    if(rules.required){
+      isValid = value.trim() !== '';
+    }
+
+    if(rules.minLength){
+      isValid = value.length >= rules.minLength;
+    }
+
+    if(rules.maxLength){
+      isValid = value.length <= rules.maxLength;
+    }
+
+    return isValid;
+  }
+
+  inputChangedHandler = (event: any, inputIdentifier: string) => {
+    const updatedOrderForm = {
+      ...this.state.orderForm
+    }
+    const updatedFormElement = {
+      ...updatedOrderForm[inputIdentifier]
+    };
+    updatedFormElement.value = event.target.value;
+    updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+    updatedOrderForm[inputIdentifier] = updatedFormElement;
+    this.setState({orderForm: updatedOrderForm});
+  }
+
   render() {
     let form: JSX.Element;
     const formElementsArray = [];
@@ -112,7 +173,8 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
     for(let key in this.state.orderForm){
       formElementsArray.push({
         id: key,
-        config: this.state.orderForm[key],
+        // TODO: Add index signature
+        config: (this.state.orderForm as any)[key.toString()],
       })
     }
 
@@ -120,14 +182,15 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
       form = <Spinner />;
     } else {
       form = (
-        <form>
+        <form onSubmit={this.orderHandler}>
           <Input elementType="..." elementConfig="..." value="..."/>
           {formElementsArray.map(formElement => (
             <Input 
               key={formElement.id}
               elementType={formElement.config.elementType}
               elementConfig={formElement.config.elementConfig}
-              value={formElement.config.elementConfig}/>
+              value={formElement.config.elementConfig}
+              changed={(event)=>this.inputChangedHandler(event, formElement)}/>
           ))}
           <Button btnType="Success" clicked={this.orderHandler}>
             Order
