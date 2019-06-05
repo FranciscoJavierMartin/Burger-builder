@@ -25,6 +25,7 @@ interface IOrderForm {
 interface IContactDataState {
   orderForm: IOrderForm;
   loading: boolean;
+  formIsValid: boolean;
 }
 
 class ContactData extends Component<IContactDataProps, IContactDataState> {
@@ -44,6 +45,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           maxLength: 6
         },
         valid: false,
+        touched: false
       },
       street: {
         elementType: "input",
@@ -56,6 +58,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           required: true
         },
         valid: false,
+        touched: false
       },
       zipCode: {
         elementType: "input",
@@ -68,6 +71,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           required: true
         },
         valid: false,
+        touched: false
       },
       country: {
         elementType: "input",
@@ -80,6 +84,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           required: true
         },
         valid: false,
+        touched: false
       },
       email: {
         elementType: "input",
@@ -92,6 +97,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
           required: true
         },
         valid: false,
+        touched: false
       },
       deliveryMethod: {
         elementType: "select",
@@ -101,14 +107,12 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
             { value: "cheapest", displayValue: "Cheapest" }
           ]
         },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
+        value: "fastest",
+        valid: false
       }
     },
-    loading: false
+    loading: false,
+    formIsValid: false
   };
 
   orderHandler = (event: any) => {
@@ -136,19 +140,22 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
   };
 
   checkValidity(value: string, rules: any) {
-    let isValid = false;
+    let isValid = true;
 
-    if(rules.required){
-      isValid = value.trim() !== '';
+    if(rules) {
+      if(rules.required){
+        isValid = isValid && value.trim() !== '';
+      }
+  
+      if(rules.minLength){
+        isValid = isValid && value.length >= rules.minLength;
+      }
+  
+      if(rules.maxLength){
+        isValid = isValid && value.length <= rules.maxLength;
+      }
     }
-
-    if(rules.minLength){
-      isValid = value.length >= rules.minLength;
-    }
-
-    if(rules.maxLength){
-      isValid = value.length <= rules.maxLength;
-    }
+    
 
     return isValid;
   }
@@ -162,8 +169,15 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
     };
     updatedFormElement.value = event.target.value;
     updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+    updatedFormElement.touched = true;
     updatedOrderForm[inputIdentifier] = updatedFormElement;
-    this.setState({orderForm: updatedOrderForm});
+
+    const formIsValid = true;
+    for(let inputIdentifier in updatedOrderForm){
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid
+    }
+
+    this.setState({orderForm: updatedOrderForm, formIsValid});
   }
 
   render() {
@@ -190,9 +204,13 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
               elementType={formElement.config.elementType}
               elementConfig={formElement.config.elementConfig}
               value={formElement.config.elementConfig}
-              changed={(event)=>this.inputChangedHandler(event, formElement)}/>
+              invalid={!formElement.config.valid}
+              shouldValidate={!!formElement.config.validation}
+              touched={formElement.config.touched}
+              changed={(event)=>this.inputChangedHandler(event, formElement.id)}/>
           ))}
-          <Button btnType="Success" clicked={this.orderHandler}>
+          <Button btnType="Success" 
+            disabled={!this.state.formIsValid} clicked={this.orderHandler}>
             Order
           </Button>
         </form>
