@@ -1,6 +1,6 @@
-import { IAction } from './../interfaces/action.interface';
-import { ADD_INGREDIENT, REMOVE_INGREDIENT} from './actions';
-import { IGlobalState } from '../interfaces/state.interface';
+import { IAction } from '../../interfaces/action.interface';
+import { ADD_INGREDIENT, REMOVE_INGREDIENT, SET_INGREDIENTS, FETCH_INGREDIENTS_FAILED} from '../actions/actions';
+import { IGlobalState } from '../../interfaces/state.interface';
 
 const INGREDIENT_PRICES = {
     Salad: 0.5,
@@ -10,16 +10,12 @@ const INGREDIENT_PRICES = {
 };
 
 const initialState: IGlobalState = {
-    ingredients: {
-        Salad: 0,
-        Bacon: 0,
-        Cheese: 0,
-        Meat: 0
-    },
-    totalPrice: 0
+    ingredients: null,
+    totalPrice: 0,
+    error: false
 };
 
-const reducer = (state = initialState, action: IAction) => {
+const reducer = (state = initialState, action: any) => {
     let newState;
 
     switch(action.type){
@@ -42,6 +38,25 @@ const reducer = (state = initialState, action: IAction) => {
                     },
                     totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName]
                 }
+        break;
+        case SET_INGREDIENTS:
+            newState = {
+                ...state,
+                ingredients: {
+                    Salad: action.ingredients.salad,
+                    Bacon: action.ingredients.bacon,
+                    Cheese: action.ingredients.Cheese,
+                    Meat: action.ingredients.Meat,
+                },
+                error: false
+            }
+        break;
+        case FETCH_INGREDIENTS_FAILED:
+            newState = {
+                ...state,
+                error: true,
+
+            }
         break;
         default:
             newState = {...state};

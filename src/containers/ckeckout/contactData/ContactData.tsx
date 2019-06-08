@@ -211,7 +211,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
               touched={formElement.config.touched}
               changed={(event)=>this.inputChangedHandler(event, formElement.id)}/>
           ))}
-          <Button btnType="Success" 
+          <Button btnType="Success"
             disabled={!this.state.formIsValid} clicked={this.orderHandler}>
             Order
           </Button>

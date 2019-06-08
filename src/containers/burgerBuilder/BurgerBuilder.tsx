@@ -7,42 +7,35 @@ import BuildControls from "../../components/burger/buildControls/BuildControls";
 import Modal from "../../components/UI/modal/Modal";
 import Spinner from '../../components/UI/spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler';
+import axios from '../../axios-orders';
 
 import { BACON, SALAD, MEAT, CHEESE } from "../../constants/ingredients";
 import OrderSummary from "../../components/burger/orderSummary/OrderSummary";
-import axios from '../../axios-orders';
 import { IRouterProps } from "../../interfaces/routerProps.interface";
-import { ADD_INGREDIENT, REMOVE_INGREDIENT } from "../../store/actions";
+import { ADD_INGREDIENT, REMOVE_INGREDIENT } from "../../store/actions/actions";
 import { IGlobalState } from "../../interfaces/state.interface";
+import * as burgerBuilderActions from '../../store/actions';
 
 interface IBurgerBuilderState {
   purchasing: boolean;
-  loading: boolean;
-  error: boolean;
 }
 
 interface IBurgerBuilderProps extends IRouterProps {
   ings: IHamburger;
   price: number;
+  error: boolean;
   onIngredientAdded: (str: string) => void;
   onIngredientRemoved: (str: string) => void;
+  onInitIngredients: () => void;
 }
 
 class BurgerBuilder extends Component<IBurgerBuilderProps, IBurgerBuilderState> {
   state = {
     purchasing: false,
-    loading: false,
-    error: false
   };
 
   componentDidMount(){
-    // axios.get('')
-    //   .then(response => {
-    //     this.setState({ingredients: response.data});
-    //   }).catch( error => {
-    //     this.setState({error: true});
-    //   });
-    
+    this.props.onInitIngredients();
   }
 
   updatePurchaseState(ingredients: any) {
@@ -75,7 +68,7 @@ class BurgerBuilder extends Component<IBurgerBuilderProps, IBurgerBuilderState> 
     }
 
     let orderSummary = null;
-    let burger = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner/>;
+    let burger = this.props.error ? <p>Ingredients can't be loaded!</p> : <Spinner/>;
 
     if(this.props.ings){
       burger = (
@@ -116,11 +109,13 @@ class BurgerBuilder extends Component<IBurgerBuilderProps, IBurgerBuilderState> 
 const mapStateToProps = (state: IGlobalState) => ({
   ings: state.ingredients,
   price: state.totalPrice,
+  error: state.error,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  onIngredientAdded: (ingName:string) => dispatch({type: ADD_INGREDIENT, ingredientName: ingName}),
-  onIngredientRemoved: (ingName:string) => dispatch({type: REMOVE_INGREDIENT, ingredientName: ingName})
+  onIngredientAdded: (ingName:string) => dispatch(burgerBuilderActions.addIngredient(ingName)),
+  onIngredientRemoved: (ingName:string) => dispatch(burgerBuilderActions.removeIngredient(ingName)),
+  onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder,axios));
