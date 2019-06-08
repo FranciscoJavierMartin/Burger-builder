@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {connect} from 'react-redux';
 import Button from "../../../components/UI/button/Button";
 import Spinner from "../../../components/UI/spinner/Spinner";
 import classes from "./ContactData.module.css";
@@ -7,9 +8,10 @@ import axios from "../../../axios-orders";
 import { IRouterProps } from "../../../interfaces/routerProps.interface";
 import Input from "../../../components/UI/input/Input";
 import { InputElement } from "../../../interfaces/inputs.interface";
+import { IGlobalState } from "../../../interfaces/state.interface";
 
 interface IContactDataProps extends IRouterProps {
-  ingredients: IHamburger;
+  ings: IHamburger;
   price: number;
 }
 
@@ -124,7 +126,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
       formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
     }
     const order = {
-      ingredient: this.props.ingredients,
+      ingredient: this.props.ings,
       price: this.props.price
     };
 
@@ -225,4 +227,9 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
   }
 }
 
-export default ContactData;
+const mapStateToProps = (state: IGlobalState) => ({
+  ings: state.ingredients,
+  price: state.totalPrice,
+});
+
+export default connect(mapStateToProps)(ContactData);
