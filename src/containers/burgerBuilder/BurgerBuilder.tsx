@@ -13,7 +13,7 @@ import { BACON, SALAD, MEAT, CHEESE } from "../../constants/ingredients";
 import OrderSummary from "../../components/burger/orderSummary/OrderSummary";
 import { IRouterProps } from "../../interfaces/routerProps.interface";
 import { ADD_INGREDIENT, REMOVE_INGREDIENT } from "../../store/actions/actions";
-import { IGlobalState } from "../../interfaces/state.interface";
+import { IReduxBugerBuilderState, IGlobalState } from "../../interfaces/state.interface";
 import * as burgerBuilderActions from '../../store/actions';
 
 interface IBurgerBuilderState {
@@ -27,6 +27,7 @@ interface IBurgerBuilderProps extends IRouterProps {
   onIngredientAdded: (str: string) => void;
   onIngredientRemoved: (str: string) => void;
   onInitIngredients: () => void;
+  onInitPurchase: () => void;
 }
 
 class BurgerBuilder extends Component<IBurgerBuilderProps, IBurgerBuilderState> {
@@ -55,7 +56,8 @@ class BurgerBuilder extends Component<IBurgerBuilderProps, IBurgerBuilderState> 
   }
 
   purchaseContinueHandler = (): void => {
-      this.props.history.push('/checkout');
+    this.props.onInitPurchase();
+    this.props.history.push('/checkout');
   }
 
   render() {
@@ -107,15 +109,16 @@ class BurgerBuilder extends Component<IBurgerBuilderProps, IBurgerBuilderState> 
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
-  ings: state.ingredients,
-  price: state.totalPrice,
-  error: state.error,
+  ings: state.burgerBuilder.ingredients,
+  price: state.burgerBuilder.totalPrice,
+  error: state.burgerBuilder.error,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
   onIngredientAdded: (ingName:string) => dispatch(burgerBuilderActions.addIngredient(ingName)),
   onIngredientRemoved: (ingName:string) => dispatch(burgerBuilderActions.removeIngredient(ingName)),
   onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
+  onInitPurchase: () => dispatch(burgerBuilderActions.purchaseInit()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder,axios));

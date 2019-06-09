@@ -8,11 +8,15 @@ import axios from "../../../axios-orders";
 import { IRouterProps } from "../../../interfaces/routerProps.interface";
 import Input from "../../../components/UI/input/Input";
 import { InputElement } from "../../../interfaces/inputs.interface";
-import { IGlobalState } from "../../../interfaces/state.interface";
+import { IReduxBugerBuilderState, IGlobalState } from "../../../interfaces/state.interface";
+import withErrorHandler from '../../../hoc/withErrorHandler';
+import * as actions from '../../../store/actions';
 
 interface IContactDataProps extends IRouterProps {
   ings: IHamburger;
   price: number;
+  onOrderBurger: (orderData: any) => void;
+  loading: boolean;
 }
 
 interface IOrderForm {
@@ -26,7 +30,6 @@ interface IOrderForm {
 
 interface IContactDataState {
   orderForm: IOrderForm;
-  loading: boolean;
   formIsValid: boolean;
 }
 
@@ -112,33 +115,25 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
         value: "fastest",
         valid: false
       }
-    },
-    loading: false,
+    },    
     formIsValid: false
   };
 
   orderHandler = (event: any) => {
     event.preventDefault();
 
-    this.setState({ loading: true });
     const formData: any = {};
     for(let formElementIdentifier in this.state.orderForm){
       formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
     }
     const order = {
       ingredient: this.props.ings,
-      price: this.props.price
+      price: this.props.price,
+      orderData: formData
     };
 
-    axios
-      .post("/orders.json", order)
-      .then(response => {
-        this.setState({ loading: false });
-        this.props.history.push("/");
-      })
-      .catch(error => {
-        this.setState({ loading: false });
-      });
+    this.props.onOrderBurger(order);
+
   };
 
   checkValidity(value: string, rules: any) {
@@ -194,7 +189,7 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
       })
     }
 
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     } else {
       form = (
@@ -228,8 +223,13 @@ class ContactData extends Component<IContactDataProps, IContactDataState> {
 }
 
 const mapStateToProps = (state: IGlobalState) => ({
-  ings: state.ingredients,
-  price: state.totalPrice,
+  ings: state.burgerBuilder.ingredients,
+  price: state.burgerBuilder.totalPrice,
+  loading: state.orders.loading,
 });
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = (dispatch: any) => ({
+  onOrderBurger: (orderData:any) => dispatch(actions.purchaseBurger(orderData))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
